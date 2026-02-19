@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # ----------------------------
 # FILNAVN
 # ----------------------------
-CSV_PATH = "cpt_profile_1_korrigert.csv"
+CSV_PATH = r"C:\Users\Ida\OneDrive - Danmarks Tekniske Universitet\Master\Advanced Geotechnical Engineering\Advanced-geo\cpt_profile_1_korrigert.csv"
 
 # ----------------------------
 # LES INN DATA
@@ -47,6 +47,19 @@ gamma_ratio[mask] = (
 )
 
 gamma_eff = gamma_ratio * gamma_w  # γ'
+
+# ----------------------------
+# LAGGRENSER
+# ----------------------------
+layers = [
+    (0.0, 3.3),
+    (3.3, 13.6),
+    (13.6, 25),
+    (25, 28.7),
+    (28.7, 36.0),
+]
+
+layer_bounds = sorted(set([b for pair in layers for b in pair]))
 
 # ----------------------------
 # AKSER
@@ -105,6 +118,10 @@ for ax in axes:
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position("top")
     ax.grid(which="major", axis="y", color=grid_color)
+
+    # ---- LEGG INN LAGGRENSER ----
+    for bound in layer_bounds:
+        ax.axhline(y=bound, color="red", linestyle="-", linewidth=0.9)
 
 plt.tight_layout()
 plt.show()
