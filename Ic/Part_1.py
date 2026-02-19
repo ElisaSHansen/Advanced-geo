@@ -302,35 +302,73 @@ def plot_plasticity_index(out: pd.DataFrame):
     z = out["depth_m"].to_numpy()
     Ic = out["Ic"].to_numpy()
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(9, 6))
 
-    # Colored zones (like your figure)
-    # Boundaries: 1.31, 2.05, 2.60, 2.95, 3.60
+    # --- Zone bands and labels (based on your table) ---
+    # Zone 7: Ic < 1.31
+    # Zone 6: 1.31–2.05
+    # Zone 5: 2.05–2.60
+    # Zone 4: 2.60–2.95
+    # Zone 3: 2.95–3.60
+    # Zone 2: > 3.60
     bands = [
-        (0.0, 1.31,  "Zone 7"),
-        (1.31, 2.05, "Zone 6"),
-        (2.05, 2.60, "Zone 5"),
-        (2.60, 2.95, "Zone 4"),
-        (2.95, 3.60, "Zone 3"),
-        (3.60, 4.50, "Zone 2"),
+        (1.00, 1.31, "Zone 7\nGravelly sand\nto dense sand"),
+        (1.31, 2.05, "Zone 6\nSands\n(clean to silty)"),
+        (2.05, 2.60, "Zone 5\nSand mixtures\n(silty sand–sandy silt)"),
+        (2.60, 2.95, "Zone 4\nSilt mixtures\n(clayey silt–silty clay)"),
+        (2.95, 3.60, "Zone 3\nClays\n(silty clay–clay)"),
+        (3.60, 4.00, "Zone 2\nOrganic soils\n– clay"),
     ]
 
-    for x0, x1, _ in bands:
-        ax.axvspan(x0, x1, alpha=0.25)
+    # Choose band colors similar to your example
+    # (Matplotlib defaults are fine too, but here we match the look)
+    band_colors = [
+        "#a8d08d",  # green
+        "#9dc3e6",  # light blue
+        "#b4a7d6",  # purple
+        "#f9cb9c",  # orange
+        "#e6b8af",  # pink
+        "#e06666",  # red
+    ]
 
-    ax.scatter(Ic, z, s=10)
+    for (x0, x1, label), c in zip(bands, band_colors):
+        ax.axvspan(x0, x1, alpha=0.65, color=c, zorder=0)
 
+        # Put zone text near the top of plot area
+        xm = 0.5 * (x0 + x1)
+        ax.text(
+            xm, 0.03, label,
+            transform=ax.get_xaxis_transform(),  # y in axes fraction
+            ha="center", va="bottom",
+            fontsize=8, color="black"
+        )
+
+    # Plot points
+    ax.scatter(Ic, z, s=10, linewidths=0, zorder=2)
+
+    # Axes style
     ax.set_xlim(1.0, 4.0)
     ax.invert_yaxis()
-    ax.grid(True)
-    add_layer_lines(ax, LAYER_LINES_M)
-
-    ax.set_xlabel("Ic [-]")
+    ax.grid(True, alpha=0.3)
     ax.set_ylabel("z [m]")
-    ax.set_title("Plasticity index as a function of depth")
+    ax.set_title("Plasticity index (Ic) as a function of depth")
+
+    # Put x-axis ticks on top like your figure
+    ax.xaxis.set_label_position("top")
+    ax.xaxis.tick_top()
+    ax.set_xlabel("Ic [-]")
+
+    # Optional: boundary lines at zone transitions
+    boundaries = [1.31, 2.05, 2.60, 2.95, 3.60]
+    for b in boundaries:
+        ax.axvline(b, linewidth=1.0, alpha=0.5)
+
+    # Optional: your horizontal layer lines (remove if you don't want them)
+    add_layer_lines(ax, LAYER_LINES_M)
 
     if SAVE_FIGS:
         fig.savefig(BASE_DIR / "03_plasticity_index_Ic.png", dpi=200)
+
     plt.tight_layout()
     plt.show()
 
