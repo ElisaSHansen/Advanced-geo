@@ -272,7 +272,7 @@ print(f"Analytical V(0): {V_an[0]/1e3:.2f} kN   (target {V_head/1e3:.2f} kN)")
 # PLOTS
 # ============================================================
 
-fig, axs = plt.subplots(1, 4, figsize=(18, 6))
+fig, axs = plt.subplots(1, 3, figsize=(18, 6))
 
 # Displacement
 axs[0].plot(y_fdm * 1000, x_fdm, label="FDM", lw=2)
@@ -285,29 +285,29 @@ axs[0].grid(True)
 axs[0].legend()
 
 # Rotation
-axs[1].plot(th_fdm * 1e3, x_fdm, lw=2)
-axs[1].plot(th_an * 1e3, x_an, "--", lw=2)
-axs[1].set_title("Rotation [$10^{-3}$ rad]")
-axs[1].set_xlabel(r"$\theta \, [10^{-3}]$")
+#axs[1].plot(th_fdm * 1e3, x_fdm, lw=2)
+#axs[1].plot(th_an * 1e3, x_an, "--", lw=2)
+#axs[1].set_title("Rotation [$10^{-3}$ rad]")
+#axs[1].set_xlabel(r"$\theta \, [10^{-3}]$")
+#axs[1].invert_yaxis()
+#axs[1].grid(True)
+
+# Moment
+axs[1].plot(M_fdm / 1e6, x_fdm, lw=2)
+axs[1].plot(M_an / 1e6, x_an, "--", lw=2)
+axs[1].set_title("Moment [MNm]")
+axs[1].set_xlabel("M [MNm]")
 axs[1].invert_yaxis()
 axs[1].grid(True)
 
-# Moment
-axs[2].plot(M_fdm / 1e6, x_fdm, lw=2)
-axs[2].plot(M_an / 1e6, x_an, "--", lw=2)
-axs[2].set_title("Moment [MNm]")
-axs[2].set_xlabel("M [MNm]")
+# Shear
+axs[2].plot(V_fdm[2:-2] / 1e3, x_fdm[2:-2], lw=2, label="FDM")
+axs[2].plot(V_an / 1e3, x_an, "--", lw=2, label="Analytical")
+axs[2].set_title("Shear [kN]")
+axs[2].set_xlabel("V [kN]")
 axs[2].invert_yaxis()
 axs[2].grid(True)
-
-# Shear
-axs[3].plot(V_fdm[2:-2] / 1e3, x_fdm[2:-2], lw=2, label="FDM")
-axs[3].plot(V_an / 1e3, x_an, "--", lw=2, label="Analytical")
-axs[3].set_title("Shear [kN]")
-axs[3].set_xlabel("V [kN]")
-axs[3].invert_yaxis()
-axs[3].grid(True)
-axs[3].legend()
+axs[2].legend()
 
 plt.tight_layout()
 plt.show()
